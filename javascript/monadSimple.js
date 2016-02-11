@@ -19,7 +19,7 @@ function arrayMonad(mv, mf) {
 	mv.forEach(function(v) {
 		result = result.concat(mf(v));
 	});
-	return result
+	return result;
 }
 
 
@@ -51,3 +51,50 @@ var liftTwoArrays = arrayMonad([1,2], function(i) {
 });
 
 console.log(liftTwoArrays);
+
+function forEach2d(array1, array2, callback) {
+	return arrayMonad(array1, function(i) {
+		return arrayMonad(array2, function(j) {
+			return [callback(i,j)];
+		})
+	})
+};
+
+console.log(forEach2d([1,2], [3,4], function(i, j) {return i+j+1;}));
+
+console.log([1,2].concat(3));
+console.log([1,2].concat([3])); //concat lifts elements to array
+
+function arrayMonadWithPush(mv, mf) {
+	var result = [];
+	mv.forEach(function(v) {
+		Array.prototype.push.apply(result, mf(v));
+	});
+	return result;
+}
+
+function forEach2dV2(array1, array2, callback) {
+	return arrayMonadWithPush(array1, function(i) {
+		return arrayMonadWithPush(array2, function(j) {
+			return [callback(i,j)];
+		})
+	})
+};
+
+console.log(forEach2dV2([1,2], [3,4], function(i, j) {return i+j+1;}));
+
+arrayMonadWithPush.mResult = function(v) {return [v];}
+
+function forEach2dV3(array1, array2, callback) {
+	return arrayMonadWithPush(array1, function(i) {
+		return arrayMonadWithPush(array2, function(j) {
+			return arrayMonadWithPush.mResult(callback(i,j));
+		})
+	})
+};
+
+console.log(forEach2dV3([1,2], [3,4], function(i, j) {return i+j+1;}));
+
+//The arrayMonad is a monadic function and is otherwise known as bind or mbind. 
+//For a function to be a monad it must define atleast the functions mbind and mresult.
+

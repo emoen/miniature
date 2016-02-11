@@ -32,3 +32,14 @@ console.log(add());
 console.log(add());
 console.log(add());
 console.log(add);
+
+function doSomething(x) {
+	var y = 4;
+	return function addThem(z) {
+		return z+4;
+	}(x);
+}
+
+console.log(doSomething(4));
+
+
