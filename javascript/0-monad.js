@@ -15,14 +15,14 @@
 // A monad has a 'bind' method that takes a function that receives a value and
 // is usually expected to return a monad.
 
-var identity = MONAD();
-var monad = identity("Hello monad.");
-monad.bind(console.log);
-
-var ajax = MONAD()
-    .lift('alert', console.log);
-var monad = ajax("Hello lift.");
-monad.alert();
+//var identity = MONAD();
+//var monad = identity("Hello monad.");
+//monad.bind(console.log);
+//
+//var ajax = MONAD()
+//    .lift('alert', console.log);
+//var monad = ajax("Hello lift.");
+//monad.alert();
 
 //    var maybe = MONAD(function (monad, value) {
 //        if (value === null || value === undefined) {
@@ -39,9 +39,13 @@ monad.alert();
 
 
 var abc = "abc";
-var appendAbc = function appendAbc(identity){ return identity.toString + "abc";}
-var text = MONAD(appendAbc);
+var appendAbc = function appendAbc(identity){ 
+	console.log("identity:"+identity)
+	return identity.toString + "abc";
+}
+var text = MONAD();
 var monad = text("hello abc");
+console.log("monad.unit:"+monad.unit("unit value"));
 monad.bind(console.log);
 
 /*jslint this */
@@ -94,7 +98,7 @@ function MONAD(modifier) {
     unit.method = function (name, func) {
 
 // Add a method to the prototype.
-
+    	console.log("unit.method name:"+name);
         prototype[name] = func;
         return unit;
     };

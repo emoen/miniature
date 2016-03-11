@@ -39,6 +39,7 @@ var thefinal = init(3)
 console.log("thefinal(3):"+thefinal);
 console.log("3*2 +1="+thefinal()+ " = "+init(3)());
 
+
 function maybe( value, fn) {
 	if ( value === null)
 		return null;

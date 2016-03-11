@@ -6,7 +6,7 @@ invokeFunction();
 
 var selfInvoke = ( function() {
 	var dummy = "hello selfinvoke closure";
-	return function() { console.log(dummy);}
+	return function namedFun() { console.log(dummy);}
 })();
 
 selfInvoke();

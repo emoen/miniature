@@ -22,3 +22,8 @@ var object123 = $.map(legendLayers, function(v, i){
 });
 console.log("obj:"+object123);
 
+//javascript only map:
+var numbers = [1, 4, 9];
+var roots = numbers.map(Math.sqrt);
+console.log("roots:"+roots)
+//roots is now [1, 2, 3], numbers is still [1, 4, 9]

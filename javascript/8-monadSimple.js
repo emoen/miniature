@@ -98,3 +98,31 @@ console.log(forEach2dV3([1,2], [3,4], function(i, j) {return i+j+1;}));
 //The arrayMonad is a monadic function and is otherwise known as bind or mbind. 
 //For a function to be a monad it must define atleast the functions mbind and mresult.
 
+
+// M(mResult(x), mf) = mf(x) - monadic law
+// whatever mResult does to x to turn x into a monadic value, M wil unwrap before applying mf
+var x = 4;
+function mf(x) {
+	return [x*2];
+}
+var a = arrayMonadWithPush(arrayMonadWithPush.mResult(x), mf);
+var b = mf(x);
+
+console.log("a:"+a+" b:"+b);
+
+// M(mv, mResult) = mv - second monadic law
+// whatever mBind does to extract mv's value - mResult will undo to return a monadic value
+var c = arrayMonadWithPush([1,2,3], arrayMonadWithPush.mResult)
+
+console.log(c);
+
+// M(M(mv, mf), mg)) == M(mv, function(x){return M(mf(x), mg)}) - third monadic law
+// it doesnt mather if you apply mf to mv - then to mg, or you apply a monadic function
+// that is a composition of mf and mg - to mv
+function mg(x) {
+	return [x * 3];
+}
+var d = arrayMonadWithPush(arrayMonadWithPush([1,2,3], mf), mg);
+var e = arrayMonadWithPush([1,2,3], function(x){return arrayMonadWithPush(mf(x), mg)})
+console.log(d);
+console.log(e);
