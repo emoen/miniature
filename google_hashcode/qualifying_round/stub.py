@@ -3,12 +3,21 @@ import pandas as pd
 import math
 import sys
 import os
+import heapq
 from heapq import heappush, heappop
+from line_profiler import LineProfiler
+import binheap
  
 CAR_ROW = 0 #Globals
 CAR_COL = 1
 CAR_TIME = 2
-cars, rides, score, completedByCar, bonus= None
+cars = None
+rides = None
+score = None
+completedByCar = None
+bonus = None
+waitingTimes= None
+heap = None
 def parseList(filename):
     global rides, bonus
     
@@ -32,16 +41,23 @@ def parseList(filename):
             ride['latestFinish'] = latestFinish
             ride['completed'] = False
             ride['rideTime'] = abs(startRow - endRow) + abs(startCol - endCol)
-            ride['used'] = False
+            #ride['used'] = False #'used' is never used
             ride['possibleCount'] = 0
             
             rides[i] = ride
             i += 1
         
-    return nRows, nCols, nCars, nRides, bonus, nTimes
+    return nRows, nCols, nCars, nRides, bonus, nTimes   
 
 def scoreAFile( afilename ):
-    global rides, cars, score, bonus, completedByCar
+    global rides, cars, score, bonus, completedByCar,waitingTimes,heap
+    cars = None
+    rides = None
+    score = None
+    completedByCar = None   
+    bonus = None
+    waitingTimes= None
+    heap = None
     
     score = 0
     nRows, nCols, nCars, nRides, bonus, nTimes = parseList( afilename )
@@ -52,28 +68,77 @@ def scoreAFile( afilename ):
     
     #schedule(nCars, nRides)
     
-    heap = [] #length nRides * nCars #Heap<WaitingTime> heap;
-    insertInHeap();
-    waitingTimes = [] #HeapElement<WaitingTime>[,] waitingTimes;
-    scheduleHeap(nCars, nRides)
+    heap = binheap.BinHeap() #[] #length nRides * nCars #Heap<WaitingTime> heap;
+    insertInHeap(nCars, nRides)
+    #waitingTimes = [] #HeapElement<WaitingTime>[,] waitingTimes;
+    schedule2(nCars, nRides)
     for i in range(nCars):
         completedByCar[i]['carRides'] = len(completedByCar[i]['rideId'])
      
-    return score
+    #return score, completedByCar
 
 def insertInHeap(nCars, nRides):
-    waitingTimes = new HeapElement<HashcodeMain.WaitingTime>[nCars, nRides];
+    global waitingTimes, heap
+    
+    waitingTimes = [[None for x in range(nRides)] for y in range(nCars)] #new HeapElement<HashcodeMain.WaitingTime>[nCars, nRides];
     for i in range(nCars):
-        for j in range(nRides)
-            if CanCarTakeRide(i, j):
+        for j in range(nRides):
+            if canCarTakeRide(i, j):
                 w = dict()#new WaitingTime();
                 w['ride'] = j
                 w['car'] = i
-                w['wait'] = WaitingTime(i, j)
+                w['wait'] = getWaitingTime(i, j)
                 w['lengthInv'] = 1.0 / rides[j]['rideTime']
-                w['getsBonus'] = getsBonus(w.car, i);
-                waitingTimes[i, j] = heap.Insert(w);
-                rides[i].possibleCount++;
+                w['getsBonus'] = getsBonus(w['car'], j)
+                wKeys = (w['wait'], (w['car'], w['ride']))
+                heap.insert(wKeys) #heapq.heappush(heap, wKeys) #waitingTimes[i, j] = heap.Insert(w);
+                waitingTimes[i][j] = w
+                rides[i]['possibleCount'] += 1;
+
+@profile
+def schedule2(nCars, nRides):
+    global heap, waitingTimes
+    while len(heap.heapList) > 1:#len(heap) > 0:
+        (wait, (car,ride)) = heap.pop() #heapq.heappop(heap) #waitingTime w = heap.Extract()
+        w = waitingTimes[car][ride]
+        waitingTimes[w['car']][w['ride']] = None
+        #rides[w['ride']]['used'] = False
+        if not rides[w['ride']]['completed'] and canCarTakeRide(w['car'], w['ride']):
+            for i in range(nCars):
+                if waitingTimes[i][w['ride']] != None:
+                    w = waitingTimes[i][w['ride']]
+                    wKeys = (w['wait'], (w['car'],w['ride']))
+                    keyIndex = heap.index( wKeys )
+                    heap.pop( keyIndex ) #heap.Delete(waitingTimes[i, w.ride])
+                    waitingTimes[i][w['ride']] = None
+                
+            takeRide(w['car'], w['ride'])
+            for i in range(nRides):
+                if waitingTimes[w['car']][i] != None:
+                    newW = dict() #WaitingTime newW = dict()
+                    newW['ride'] = i
+                    newW['car'] = w['car']
+                    newW['wait'] = getWaitingTime(w['car'], i)
+                    newW['getsBonus'] = getsBonus(w['car'], i);
+                    if newW['wait'] < 0:
+                        #// newW.wait = int.MaxValue;
+                        newW = waitingTimes[w['car']][i]
+                        wKeys = (newW['wait'],(newW['car'], newW['ride']))
+                        heap.pop( heap.index( wKeys ) ) #heap.Delete(waitingTimes[w.car, i])
+                        waitingTimes[w['car']][i] = None
+                        rides[i]['possibleCount'] -= 1
+                    else:
+                        #heap.ChangeValue(waitingTimes[w.car, i], newW)
+                        wToDelete = waitingTimes[w['car']][i]
+                        wTupeToDelete = (wToDelete['wait'],(wToDelete['car'], wToDelete['ride']))
+                        heap.pop( heap.index( wTupeToDelete ) )
+                        newWKeys = (newW['wait'],( newW['car'], newW['ride'] ))
+                        heap.insert(newWKeys)#heapq.heappush( heap, newWKeys )
+                        waitingTimes[w['car']][i] = newW
+
+def getWaitingTime(car, ride):
+    global cars
+    return getActualStartTime(car, ride) - cars[car, CAR_TIME];
      
 def schedule(nCars, nRides):
     global rides
@@ -93,7 +158,7 @@ def schedule(nCars, nRides):
 def takeRide(car, ride):
     global cars, rides, score, completedByCar, bonus
     rides[ride]['completed'] = True
-    actualStartTime = actualStartTimeFunc(car, ride)
+    actualStartTime = getActualStartTime(car, ride)
     endTime = actualStartTime + rides[ride]['rideTime']
     cars[car, CAR_ROW] = rides[ride]['endRow']
     cars[car, CAR_COL] = rides[ride]['endCol']
@@ -103,7 +168,7 @@ def takeRide(car, ride):
     if actualStartTime == rides[ride]['earlyestStart']:
         score += bonus
         
-def actualStartTimeFunc(car, ride):
+def getActualStartTime(car, ride):
     global cars, rides
     timeToStart = distanceToStart(car, rides[ride])
     return max(cars[car, CAR_TIME] + timeToStart, rides[ride]['earlyestStart'])
@@ -135,26 +200,32 @@ def distanceToStart(car, curRide):
 
     return abs(curRide['startCol'] - nowCol) + abs(curRide['startRow'] - nowRow)
 
-def write_file():
+'''def write_file():
     F = open("workfile.out","w")
     F.writelines(str(out_count)+"\n")
     F.write(str(out_matrix[0:out_count,:]))
 
-    #print("completed by car:"+str(completedByCar))
-    #print("Score:"+str(score))
-    #out_matrix = np.array([[1,2,3],[2,3,4]])
-    #np.savetxt("filename.txt", out_matrix.astype(int), fmt='%i', newline="\n")
-    #print(out_matrix)
-
+    print("completed by car:"+str(completedByCar))
+    print("Score:"+str(score))
+    out_matrix = np.array([[1,2,3],[2,3,4]])
+    np.savetxt("filename.txt", out_matrix.astype(int), fmt='%i', newline="\n")
+    print(out_matrix)
+'''
 def main(argv):
     
-    example = scoreAFile("infile/example.in")
-    print("example:"+str(example))
-    small = scoreAFile("infile/small.in")
-    print("small:"+str(small))
-    medium = scoreAFile("infile/medium.in")
+    profile = LineProfiler(scoreAFile("infile/small.in"))
+    profile.print_stats()
+    #example, completedByCar = scoreAFile("infile/example.in")
+    
+    #print(completedByCar)
+    #print("example:"+str(example))
+
+    #small, completedByCar = scoreAFile("infile/small.in")
+    #print("small:"+str(small))
+    
+    '''medium, completedByCar = scoreAFile("infile/medium.in")
     print("medium:"+str(medium))
-    big = scoreAFile("infile/big.in")
+    big, completedByCar = scoreAFile("infile/big.in")
     print("big:"+str(big))
     high_bonus = scoreAFile("infile/high_bonus.in")
     print("high_bonus:"+str(high_bonus))
@@ -172,7 +243,8 @@ def main(argv):
         scores.iloc[4,1] = high_bonus
     scores.iloc[5,1] = scores[1].sum()
     scores.to_csv("scores.txt", sep=' ', header=None, index=False)
-    print(scores)
+    print(scores)'''
+    
     
 if __name__ == "__main__":
     main(sys.argv)
