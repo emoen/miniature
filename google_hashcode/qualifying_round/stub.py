@@ -4,9 +4,9 @@ import math
 import sys
 import os
 import heapq
-from heapq import heappush, heappop
-from line_profiler import LineProfiler
-import binheap
+#from heapq import heappush, heappop
+#from line_profiler import LineProfiler
+import heapq_27_with_index as heapq
  
 CAR_ROW = 0 #Globals
 CAR_COL = 1
@@ -18,6 +18,7 @@ completedByCar = None
 bonus = None
 waitingTimes= None
 heap = None
+heapIndex = None
 def parseList(filename):
     global rides, bonus
     
@@ -50,7 +51,7 @@ def parseList(filename):
     return nRows, nCols, nCars, nRides, bonus, nTimes   
 
 def scoreAFile( afilename ):
-    global rides, cars, score, bonus, completedByCar,waitingTimes,heap
+    global rides, cars, score, bonus, completedByCar,waitingTimes,heap, heapIndex
     cars = None
     rides = None
     score = None
@@ -58,6 +59,7 @@ def scoreAFile( afilename ):
     bonus = None
     waitingTimes= None
     heap = None
+    heapIndex = None
     
     score = 0
     nRows, nCols, nCars, nRides, bonus, nTimes = parseList( afilename )
@@ -68,7 +70,8 @@ def scoreAFile( afilename ):
     
     #schedule(nCars, nRides)
     
-    heap = binheap.BinHeap() #[] #length nRides * nCars #Heap<WaitingTime> heap;
+    heap = [] #length nRides * nCars #Heap<WaitingTime> heap;
+    heapIndex = dict()
     insertInHeap(nCars, nRides)
     #waitingTimes = [] #HeapElement<WaitingTime>[,] waitingTimes;
     schedule2(nCars, nRides)
@@ -78,7 +81,7 @@ def scoreAFile( afilename ):
     #return score, completedByCar
 
 def insertInHeap(nCars, nRides):
-    global waitingTimes, heap
+    global waitingTimes, heap, heapIndex
     
     waitingTimes = [[None for x in range(nRides)] for y in range(nCars)] #new HeapElement<HashcodeMain.WaitingTime>[nCars, nRides];
     for i in range(nCars):
@@ -91,15 +94,15 @@ def insertInHeap(nCars, nRides):
                 w['lengthInv'] = 1.0 / rides[j]['rideTime']
                 w['getsBonus'] = getsBonus(w['car'], j)
                 wKeys = (w['wait'], (w['car'], w['ride']))
-                heap.insert(wKeys) #heapq.heappush(heap, wKeys) #waitingTimes[i, j] = heap.Insert(w);
+                heapq.heappush2(heap, wKeys, heapIndex) #waitingTimes[i, j] = heap.Insert(w);
                 waitingTimes[i][j] = w
                 rides[i]['possibleCount'] += 1;
 
-@profile
+#@profile
 def schedule2(nCars, nRides):
-    global heap, waitingTimes
-    while len(heap.heapList) > 1:#len(heap) > 0:
-        (wait, (car,ride)) = heap.pop() #heapq.heappop(heap) #waitingTime w = heap.Extract()
+    global heap, heapIndex, waitingTimes
+    while len(heap) > 0:
+        (wait, (car,ride)) = heapq.heappop2(heap, heapIndex) #waitingTime w = heap.Extract()
         w = waitingTimes[car][ride]
         waitingTimes[w['car']][w['ride']] = None
         #rides[w['ride']]['used'] = False
@@ -108,8 +111,7 @@ def schedule2(nCars, nRides):
                 if waitingTimes[i][w['ride']] != None:
                     w = waitingTimes[i][w['ride']]
                     wKeys = (w['wait'], (w['car'],w['ride']))
-                    keyIndex = heap.index( wKeys )
-                    heap.pop( keyIndex ) #heap.Delete(waitingTimes[i, w.ride])
+                    heapq.heappop_arbitrary(heap, heapIndex, wKeys) #heap.Delete(waitingTimes[i, w.ride])
                     waitingTimes[i][w['ride']] = None
                 
             takeRide(w['car'], w['ride'])
@@ -124,16 +126,16 @@ def schedule2(nCars, nRides):
                         #// newW.wait = int.MaxValue;
                         newW = waitingTimes[w['car']][i]
                         wKeys = (newW['wait'],(newW['car'], newW['ride']))
-                        heap.pop( heap.index( wKeys ) ) #heap.Delete(waitingTimes[w.car, i])
+                        heapq.heappop_arbitrary(heap, heapIndex, wKeys) #heap.Delete(waitingTimes[w.car, i])
                         waitingTimes[w['car']][i] = None
                         rides[i]['possibleCount'] -= 1
                     else:
                         #heap.ChangeValue(waitingTimes[w.car, i], newW)
                         wToDelete = waitingTimes[w['car']][i]
                         wTupeToDelete = (wToDelete['wait'],(wToDelete['car'], wToDelete['ride']))
-                        heap.pop( heap.index( wTupeToDelete ) )
+                        heapq.heappop_arbitrary(heap, heapIndex, wTupeToDelete)
                         newWKeys = (newW['wait'],( newW['car'], newW['ride'] ))
-                        heap.insert(newWKeys)#heapq.heappush( heap, newWKeys )
+                        heapq.heappush2( heap, newWKeys, heapIndex )
                         waitingTimes[w['car']][i] = newW
 
 def getWaitingTime(car, ride):
@@ -213,12 +215,12 @@ def distanceToStart(car, curRide):
 '''
 def main(argv):
     
-    profile = LineProfiler(scoreAFile("infile/small.in"))
-    profile.print_stats()
-    #example, completedByCar = scoreAFile("infile/example.in")
+    #profile = LineProfiler(scoreAFile("infile/small.in"))
+    #profile.print_stats()
+    example, completedByCar = scoreAFile("infile/example.in")
     
-    #print(completedByCar)
-    #print("example:"+str(example))
+    print(completedByCar)
+    print("example:"+str(example))
 
     #small, completedByCar = scoreAFile("infile/small.in")
     #print("small:"+str(small))
