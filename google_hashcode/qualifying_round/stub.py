@@ -66,7 +66,7 @@ def scoreAFile( afilename ):
     
     #completed By global        
     cars = np.zeros((nCars, 3)) #cars start at (0,0) and T=0
-    completedByCar = list( [{'carRides': 0, 'rideId': []} for i in range(nCars)] )
+    completedByCar = list( [{'carRides': i, 'rideId': []} for i in range(nCars)] )
     
     #schedule(nCars, nRides)
     
@@ -75,10 +75,11 @@ def scoreAFile( afilename ):
     insertInHeap(nCars, nRides)
     #waitingTimes = [] #HeapElement<WaitingTime>[,] waitingTimes;
     schedule2(nCars, nRides)
+
     for i in range(nCars):
         completedByCar[i]['carRides'] = len(completedByCar[i]['rideId'])
      
-    #return score, completedByCar
+    return score, completedByCar
 
 def insertInHeap(nCars, nRides):
     global waitingTimes, heap, heapIndex
@@ -202,30 +203,26 @@ def distanceToStart(car, curRide):
 
     return abs(curRide['startCol'] - nowCol) + abs(curRide['startRow'] - nowRow)
 
-'''def write_file():
-    F = open("workfile.out","w")
-    F.writelines(str(out_count)+"\n")
-    F.write(str(out_matrix[0:out_count,:]))
-
-    print("completed by car:"+str(completedByCar))
-    print("Score:"+str(score))
-    out_matrix = np.array([[1,2,3],[2,3,4]])
-    np.savetxt("filename.txt", out_matrix.astype(int), fmt='%i', newline="\n")
-    print(out_matrix)
-'''
 def main(argv):
     
     #profile = LineProfiler(scoreAFile("infile/small.in"))
     #profile.print_stats()
+<<<<<<< HEAD
+    scoreAFile("infile/example.in")
+    example, completedByCar = scoreAFile("infile/example.in")
+    
+    #print(completedByCar)
+=======
     example, completedByCar = scoreAFile("infile/example.in")
     
     print(completedByCar)
+>>>>>>> daad1b2909ee6a0accbabdde2b72a186f67282c5
     print("example:"+str(example))
 
-    #small, completedByCar = scoreAFile("infile/small.in")
-    #print("small:"+str(small))
+    small, completedByCar = scoreAFile("infile/small.in")
+    print("small:"+str(small))
     
-    '''medium, completedByCar = scoreAFile("infile/medium.in")
+    medium, completedByCar = scoreAFile("infile/medium.in")
     print("medium:"+str(medium))
     big, completedByCar = scoreAFile("infile/big.in")
     print("big:"+str(big))
@@ -245,8 +242,7 @@ def main(argv):
         scores.iloc[4,1] = high_bonus
     scores.iloc[5,1] = scores[1].sum()
     scores.to_csv("scores.txt", sep=' ', header=None, index=False)
-    print(scores)'''
-    
+    print(scores)
     
 if __name__ == "__main__":
     main(sys.argv)
