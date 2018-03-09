@@ -66,8 +66,7 @@ def scoreAFile( afilename ):
     
     #completed By global        
     cars = np.zeros((nCars, 3)) #cars start at (0,0) and T=0
-    completedByCar = list( [{'carRides': i, 'rideId': []} for i in range(nCars)] )
-    
+    completedByCar = list( [{'carRides': 0, 'rideId': []} for i in range(nCars)] )
     #schedule(nCars, nRides)
     
     heap = [] #length nRides * nCars #Heap<WaitingTime> heap;
@@ -110,8 +109,8 @@ def schedule2(nCars, nRides):
         if not rides[w['ride']]['completed'] and canCarTakeRide(w['car'], w['ride']):
             for i in range(nCars):
                 if waitingTimes[i][w['ride']] != None:
-                    w = waitingTimes[i][w['ride']]
-                    wKeys = (w['wait'], (w['car'],w['ride']))
+                    tmp = waitingTimes[i][w['ride']]
+                    wKeys = (tmp['wait'], (tmp['car'],tmp['ride']))
                     heapq.heappop_arbitrary(heap, heapIndex, wKeys) #heap.Delete(waitingTimes[i, w.ride])
                     waitingTimes[i][w['ride']] = None
                 
@@ -137,6 +136,7 @@ def schedule2(nCars, nRides):
                         heapq.changeValue(heap, wTupeToDelete, newWKeys, heapIndex)  #heap.ChangeValue(waitingTimes[w.car, i], newW) 
                         waitingTimes[w['car']][i]['wait'] = newW['wait']
                         waitingTimes[w['car']][i]['getsBonus'] = newW['getsBonus']
+                        
 def getWaitingTime(car, ride):
     global cars
     return getActualStartTime(car, ride) - cars[car, CAR_TIME];
@@ -164,7 +164,7 @@ def takeRide(car, ride):
     cars[car, CAR_ROW] = rides[ride]['endRow']
     cars[car, CAR_COL] = rides[ride]['endCol']
     cars[car, CAR_TIME] = endTime
-    completedByCar[car]['rideId'].append( rides[ride]['rideNumber'] )
+    completedByCar[car]['rideId'] += [ rides[ride]['rideNumber'] ]
     score += rides[ride]['rideTime']
     if actualStartTime == rides[ride]['earlyestStart']:
         score += bonus
@@ -201,22 +201,33 @@ def distanceToStart(car, curRide):
 
     return abs(curRide['startCol'] - nowCol) + abs(curRide['startRow'] - nowRow)
 
+def doWrite(filename, scores):
+    F = open(filename, "w")
+    for dictElement in scores:
+        ridesStr = ' '.join(map(str, dictElement['rideId']))
+        F.writelines(str(dictElement['carRides'])+" "+ridesStr+"\n")
+    
 def main(argv):
     
     #profile = LineProfiler(scoreAFile("infile/small.in"))
     #profile.print_stats()
     example, completedByCar = scoreAFile("infile/example.in")
     print("example:"+str(example))
-
+    doWrite("output/example.txt", completedByCar)
+'''
     small, completedByCar = scoreAFile("infile/small.in")
     print("small:"+str(small))
+    doWrite("output/small.txt", completedByCar)
     
     medium, completedByCar = scoreAFile("infile/medium.in")
     print("medium:"+str(medium))
+    doWrite("output/medium.txt", completedByCar)
     big, completedByCar = scoreAFile("infile/big.in")
     print("big:"+str(big))
-    high_bonus = scoreAFile("infile/high_bonus.in")
+    doWrite("output/big.txt", completedByCar)
+    high_bonus, completedByCar = scoreAFile("infile/high_bonus.in")
     print("high_bonus:"+str(high_bonus))
+    doWrite("output/high_bonus.txt", completedByCar)
     
     scores = pd.read_csv("scores.txt", delimiter=' ', header=None, index_col=False)
     if scores.iloc[0,1] < example:
@@ -232,6 +243,7 @@ def main(argv):
     scores.iloc[5,1] = scores[1].sum()
     scores.to_csv("scores.txt", sep=' ', header=None, index=False)
     print(scores)
+'''
     
 if __name__ == "__main__":
     main(sys.argv)
