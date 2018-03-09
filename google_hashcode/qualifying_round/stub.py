@@ -131,13 +131,12 @@ def schedule2(nCars, nRides):
                         waitingTimes[w['car']][i] = None
                         rides[i]['possibleCount'] -= 1
                     else:
-                        #heap.ChangeValue(waitingTimes[w.car, i], newW)
-                        wToDelete = waitingTimes[w['car']][i]
+                        
                         wTupeToDelete = (wToDelete['wait'],(wToDelete['car'], wToDelete['ride']))
-                        heapq.heappop_arbitrary(heap, heapIndex, wTupeToDelete)
-                        newWKeys = (newW['wait'],( newW['car'], newW['ride'] ))
-                        heapq.heappush2( heap, newWKeys, heapIndex )
-                        waitingTimes[w['car']][i] = newW
+                        #newWKeys = (newW['wait'],( newW['car'], newW['ride'] ))
+                        newCost = newW['wait']
+                        print(heapIndex)
+                        heapq.changeValue(heap, wTupeToDelete, newCost, heapIndex)  #heap.ChangeValue(waitingTimes[w.car, i], newW) 
 
 def getWaitingTime(car, ride):
     global cars
@@ -207,16 +206,7 @@ def main(argv):
     
     #profile = LineProfiler(scoreAFile("infile/small.in"))
     #profile.print_stats()
-<<<<<<< HEAD
-    scoreAFile("infile/example.in")
     example, completedByCar = scoreAFile("infile/example.in")
-    
-    #print(completedByCar)
-=======
-    example, completedByCar = scoreAFile("infile/example.in")
-    
-    print(completedByCar)
->>>>>>> daad1b2909ee6a0accbabdde2b72a186f67282c5
     print("example:"+str(example))
 
     small, completedByCar = scoreAFile("infile/small.in")

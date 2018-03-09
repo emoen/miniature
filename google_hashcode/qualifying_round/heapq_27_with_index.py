@@ -177,6 +177,8 @@ def heappop_arbitrary(heap, heapIndex, item):
                 if elementIndex == heapIndex[heap[elementIndex]]:
                     _siftup(heap, elementIndex, heapIndex)
 
+def changeValue(heap, itemOld, newCost, heapIndex )
+
 def heapreplace(heap, item):
     """Pop and return the current smallest value, and add the new item.
 
