@@ -131,13 +131,12 @@ def schedule2(nCars, nRides):
                         waitingTimes[w['car']][i] = None
                         rides[i]['possibleCount'] -= 1
                     else:
-                        
+                        wToDelete = waitingTimes[w['car']][i]
                         wTupeToDelete = (wToDelete['wait'],(wToDelete['car'], wToDelete['ride']))
-                        #newWKeys = (newW['wait'],( newW['car'], newW['ride'] ))
-                        newCost = newW['wait']
-                        print(heapIndex)
-                        heapq.changeValue(heap, wTupeToDelete, newCost, heapIndex)  #heap.ChangeValue(waitingTimes[w.car, i], newW) 
-
+                        newWKeys = (newW['wait'],( newW['car'], newW['ride'] ))
+                        heapq.changeValue(heap, wTupeToDelete, newWKeys, heapIndex)  #heap.ChangeValue(waitingTimes[w.car, i], newW) 
+                        waitingTimes[w['car']][i]['wait'] = newW['wait']
+                        waitingTimes[w['car']][i]['getsBonus'] = newW['getsBonus']
 def getWaitingTime(car, ride):
     global cars
     return getActualStartTime(car, ride) - cars[car, CAR_TIME];
