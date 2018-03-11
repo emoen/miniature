@@ -1,6 +1,6 @@
 examples 10
-small 174677
-medium 8188764
-big 5566207
-high_bonus 15354945
-total 29284603
+small 172902
+medium 15808595
+big 10636161
+high_bonus 21338222
+total 47955890

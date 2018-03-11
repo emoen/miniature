@@ -1,5 +1,5 @@
 # -*- coding: latin-1 -*-
-
+from line_profiler import LineProfiler
 """Heap queue algorithm (a.k.a. priority queue).
 
 Heaps are arrays for which a[k] <= a[2*k+1] and a[k] <= a[2*k+2] for
@@ -155,7 +155,8 @@ def heappop2(heap, heapIndex):
         returnitem = lastelt
     del heapIndex[returnitem]
     return returnitem
-    
+
+ 
 def heappop_arbitrary(heap, heapIndex, item):
     assert len(heap) == len(heapIndex)
     
@@ -177,6 +178,7 @@ def heappop_arbitrary(heap, heapIndex, item):
                 if elementIndex == heapIndex[heap[elementIndex]]:
                     _siftup(heap, elementIndex, heapIndex)
 
+#@profile   
 def changeValue(heap, itemOld, itemNew, heapIndex ):
     elementIndex = heapIndex[itemOld]
     heap[elementIndex] = itemNew
@@ -534,7 +536,7 @@ if __name__ == "__main__":
     sort = []
     while heap:
         sort.append(heappop(heap))
-    print sort
+    print(sort)
 
     import doctest
     doctest.testmod()
