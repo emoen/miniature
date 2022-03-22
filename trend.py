@@ -3,7 +3,7 @@ from pytrends.request import TrendReq
 pytrends = TrendReq(hl="en-US", tz=360)
 kw_list = ["NFT's"]
 kw_list = ["oil"]
-kw_list = ["ukraine"]
+kw_list = ["deep value driller"]
 pytrends.build_payload(kw_list=kw_list)
 #pytrend.build_payload(kw_list, timeframe='today 1-m')
 
@@ -17,10 +17,11 @@ historicaldf.plot(subplots=True, figsize=(20, 12))
 
 df = pytrends.interest_over_time()
 
-adf = df[df.index > '2020-01-01']
+adf = df[df.index > '2021-06-01']
 
 df.plot(figsize=(20,7), color='purple', linewidth=7, label=kw_list)
 adf["NFT's"].plot(figsize=(20,7), color='purple', linewidth=7)
 adf["oil"].plot(figsize=(20,7), color='purple', linewidth=7)
 adf["ukraine"].plot(figsize=(20,7), color='purple', linewidth=7)
+adf["deep value driller"].plot(figsize=(20,7), color='purple', linewidth=7)
 
