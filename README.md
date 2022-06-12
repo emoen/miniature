@@ -12,7 +12,7 @@ random stuff:
 -https://github.com/Farmhouse121/Adventures-in-Financial-Data-Science/tree/b8901c48471acb46cefcd5f87629b0a65a061a8b
 
 ### GNN:
-https://www.cl.cam.ac.uk/seminars/wednesday/video/20220309-1500-t170978.html
+v Graph Neural Networks through the lens of algebraic topology, differential geometry, and PDEs https://www.cl.cam.ac.uk/seminars/wednesday/video/20220309-1500-t170978.html
 
 ###SOTA time-series:
 0.https://www.linkedin.com/posts/qingsong-wen-22814156_timeseries-timeseriesanalysis-forecasting-activity-6940824376476909568-gE6m/?utm_source=linkedin_share&utm_medium=member_desktop_web
