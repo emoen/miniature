@@ -1,5 +1,8 @@
 # miniature
 
+ML-badge:
+class predictor probability, decision tree, finding effect power, naive bayes, underfit, "semi-reinforcement learning, un, super, semi-super"
+
 random stuff:
 Cholesky decomposition of a matrix: A = L L* or A = U* U of a Hermitian positive-definite matrix 
 
