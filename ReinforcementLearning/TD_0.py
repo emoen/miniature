@@ -34,6 +34,7 @@ if __name__ =="__main__":
     # library imports
     import gym, numpy as np  #openAI gym 
     # gym environment
-    env=gym.make("FrozenLake-v0")
+    gym.make('FrozenLake-v1', desc=None,map_name="4x4", is_slippery=True)
+    #env=gym.make("FrozenLake-v0")
     # environment model
     env.env.P
