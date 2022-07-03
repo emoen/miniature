@@ -20,7 +20,7 @@ imediatly on transition S_t and receives R_t+1. For MC the target is G_t and
 for TD it is R_t+1 + gamma*V(S_t+1). Gamma is the discount factor.
 This method is called TD(0) - one step TD.
 
-<code>
+<pre>
 def tabular_TD_0_to_estimate_V_pi(pi, alpha:(0,1]):
   initialize V(S), for all s in S+, except V(terminal)=0
   for each step in episode and S != terminal:
@@ -28,4 +28,4 @@ def tabular_TD_0_to_estimate_V_pi(pi, alpha:(0,1]):
 	Take action A, observe R, S'
 	V(S) = V(S) + alpha[R+ gamma*V(S')-V(S)]
 	S = S'
-</code>
+</pre>
