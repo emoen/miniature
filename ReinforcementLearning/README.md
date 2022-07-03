@@ -1,5 +1,7 @@
 ### Temporal-Difference Learning (TD)
 
+(policy iteration vs value iteration)
+
 Both TD and Monte Carlo use experience to solve prediction problem. Following policy pi, 
 both methods update their estimates V of pi_v for non-terminal state S._t
 Monte Carlo wait until the return following the visit is know, then use that return
