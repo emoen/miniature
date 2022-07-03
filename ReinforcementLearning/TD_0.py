@@ -1,3 +1,5 @@
+#https://towardsdatascience.com/value-iteration-to-solve-openai-gyms-frozenlake-6c5e7bf0a64d
+
 def TD_0(policy):
   #input policy=policy to be evaluated
   V = np.zeros(env.env.nS)
