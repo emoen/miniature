@@ -31,3 +31,8 @@ def tabular_TD_0_to_estimate_V_pi(pi, alpha:(0,1]):
 	V(S) = V(S) + alpha[R+ gamma*V(S')-V(S)]
 	S = S'
 </pre>
+
+### Step valuation under random policy
+
+The second last step of frozen lake 4x4 under random policy:
+<img>https://github.com/emoen/miniature/blob/master/ReinforcementLearning/img/random_policy_td0.png</img>
