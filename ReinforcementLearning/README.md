@@ -34,5 +34,43 @@ def tabular_TD_0_to_estimate_V_pi(pi, alpha:(0,1]):
 
 ### Step valuation under random policy
 
-The second last step of frozen lake 4x4 under random policy:
+The second last step evaluation of frozen lake 4x4 under random policy:
 <img src="https://github.com/emoen/miniature/blob/master/ReinforcementLearning/img/random_policy_td0.png" />
+
+
+### Policy iteration - Sarsa: On-policy and Q-learning: off-policy
+
+On-policy:
+<pre>
+def Sarsa(step_size_alpha in (0,1], epsilon > 0):
+    initialize Q(s, a), for all s in S+, a in A(s), arbitrarily, except Q(terminal, .)=0
+	for each episode:
+	    initialize S
+		Choose A from S using policy derived from Q (epsilon-greedy)
+		loop for each step in episode:
+		    take action A, observe R, S'
+			choose A' from S' under policy derived from Q
+			Q(S, A) = Q(S, A) + alpha*[R + gamma*Q(S', A') - Q(S, A)]
+			S = S', A = A'
+	    until S terminal
+</pre>
+
+Off-policy
+<pre>
+def Q-learning(step_size_alpha in (0,1], epsilon > 0):
+    initialize Q(s, a) for all s in S+, a in A(s), arbitrarily, except Q(terminal, .)=0
+	for each episode:
+	    initialize S
+
+		loop for each step in episode:
+			Choose A from S using policy derived from Q (epsilon-greedy)
+		    take action A, observe R, S'
+			
+			Q(S, A) = Q(S, A) + alpha*[R + gamma*Q(S', A') - Q(S, A)]
+			S = S'
+	    until S terminal
+</pre>			
+
+
+
+>>>>>>> Stashed changes

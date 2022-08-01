@@ -1,45 +1,15 @@
-#https://towardsdatascience.com/value-iteration-to-solve-openai-gyms-frozenlake-6c5e7bf0a64d
+# ( https://towardsdatascience.com/value-iteration-to-solve-openai-gyms-frozenlake-6c5e7bf0a64d )
+#https://medium.com/reinforcement-learning-in-python-temporal/reinforcement-learning-in-python-temporal-difference-prediction-5b3b4e46f22f
 
 import gym
 import pygame
 import numpy as np
 import matplotlib.pyplot as plt
 
-def TD_0(policy): #input policy=policy to be evaluated
-  V = np.zeros(env.env.nS)
-  for i in range(100):
-    S = env.reset()
-    v=0 
-    for t in range(1000): #steps in episode
-      A = int(np.random.rand()*len(policy[S])) # demo purposes always take random action
-      obs, reward, done, info = env.step(A)    # take action A observe outcome
-      v += policy[S][A] * info['prob'] * (reward + 0.9 * V[obs]) # sample expected values using Belman Optimality Update rule
-      V[S] = v                                 # use the current estimate instead of true value
-      if done: # check if episode is over
-        break
-      
-      else:    # update value for none terminal states
-        V[S] += V[S] + 0.001 * (reward + 0.9 * V[obs] - V[S]) # update the state
-        S = obs 
-  return V
-  
-
 def random_policy():
     return env.action_space.sample()
-    
-    
-#num_episodes = 100#0
-#num_timesteps = 1000
-  
-#V = {}
-#for s in range(env.observation_space.n):
-#    V[s] = 0.0
 
-#for i in range(num_episodes):
-#    s = env.reset()  # initialize the state by resetting the environment
-#    V = doOne(V, env, s, num_timesteps, i)
-
-def doOne(V, env, s, num_timesteps, episode): #TD_0
+def TD_0(V, env, s, num_timesteps, episode): #TD_0
     debug = False
     route = np.asarray([0])
     for t in range(num_timesteps): 
@@ -75,33 +45,31 @@ def printLake(V, route):
         print(" ".join(routeLine[i-3:i+1] ) )
         
 if __name__ =="__main__":
-    # library imports
-    import gym, numpy as np  #openAI gym
-    # gym environment
     env = gym.make('FrozenLake-v1', desc=None,map_name="4x4", is_slippery=False)
-    #env=gym.make("FrozenLake-v0")
-    # environment model
     env.env.P
 
-    #df = pd.DataFrame(list(V.items()), columns=['state', 'value'])
-    # dictionary of states
-    V = {}
-    for s in range(env.observation_space.n):
-        V[s] = 0.0
+    #df = pd.DataFrame(list(V.items()), columns=['state', 'value']) # dictionary of states
+    
+V = {}
+for s in range(env.observation_space.n):
+    V[s] = 0.0
 
-    alpha = 0.85  # learning rate
-    gamma = 0.90  # discount factor
+
+alpha = 0.85  # learning rate
+gamma = 0.90  # discount factor
 
     # num episodes, timesteps
 num_episodes = 10000
 num_timesteps = 1000
 
     # for each episode
+    
+env = gym.make('FrozenLake-v1', desc=None,map_name="4x4", is_slippery=False)    
 V0 = np.zeros(num_episodes)
 V13 = np.zeros(num_episodes)
 for i in range(num_episodes):
     s = env.reset()  # initialize the state by resetting the environment
-    V = doOne(V, env, s, num_timesteps, i)
+    V = TD_0(V, env, s, num_timesteps, i)
     V0[i] = V[0]
     V13[i] = V[14]
 
@@ -109,5 +77,6 @@ plt.plot(V13)
 plt.show()        
     
     
+############### policy #########################
 
 
