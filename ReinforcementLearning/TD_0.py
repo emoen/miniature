@@ -55,10 +55,11 @@ for s in range(env.observation_space.n):
     V[s] = 0.0
 
 
-alpha = 0.85  # learning rate
-gamma = 0.90  # discount factor
+
 
     # num episodes, timesteps
+gamma = 0.90  # discount factor    
+alpha = 0.85  # learning rate
 num_episodes = 10000
 num_timesteps = 1000
 
@@ -78,5 +79,67 @@ plt.show()
     
     
 ############### policy #########################
+
+epsilon = 0.9
+
+Q = np.zeros((env.observation_space.n, env.action_space.n)) # Q matrix
+
+#Function to choose the next action
+def choose_action(state):
+    action=0
+    if np.random.uniform(0, 1) < epsilon:
+        action = env.action_space.sample()
+    else:
+        action = np.argmax(Q[state, :])
+    return action
+ 
+#Function to learn the Q-value
+def update(s, s2, reward, a, a2):
+    predict = Q[s, a]
+    target = reward + gamma * Q[s2, a2]
+    Q[s, a] = Q[s, a] + alpha * (target - predict)
+
+
+#Initializing the reward
+reward=0
+
+#0: LEFT 1: DOWN 2: RIGHT 3: UP
+#def sarsa(episode, ):
+# Starting the SARSA learning
+VV = np.zeros(num_episodes)
+for episode in range(num_episodes):
+    t = 0
+    s1 = env.reset()
+    a1 = choose_action(s1)
+ 
+    while t < num_timesteps:
+        #Visualizing the training
+        #env.render()
+         
+        #Getting the next state
+        s2, reward, done, info = env.step(a1)
+ 
+        #Choosing the next action
+        a2 = choose_action(s2)
+         
+        #Learning the Q-value
+        update(s1, s2, reward, a1, a2)
+ 
+        s1 = s2
+        a1 = a2
+         
+        #Updating the respective vaLues
+        t += 1
+        reward += 1
+         
+        #If at the end of learning process
+        if done:
+            break
+            
+    VV[episode] = Q[14, 2] # last step and step right
+    
+plt.plot(VV)
+plt.show()     
+
 
 
