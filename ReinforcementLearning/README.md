@@ -72,7 +72,7 @@ def Q-learning(step_size_alpha in (0,1], epsilon > 0):
 </pre>			
 
 
-The second last step (14) evaluation of frozen lake 4x4 under sarsa when action is go right:
+The second last step cell -14 step right, and the 2 neighbours 13 step right and 10 step down evaluated with saras
 | Cell 14 right | cell 13 right | cell 10 down |
 | - | - | - |
 |<img src="https://github.com/emoen/miniature/blob/master/ReinforcementLearning/img/SARSA_last_step_go_right.png" /> | <img src="https://github.com/emoen/miniature/blob/master/ReinforcementLearning/img/SARSA_13_step_go_right_epsilon_02.png"  /> | b<img src="https://github.com/emoen/miniature/blob/master/ReinforcementLearning/img/SARSA_10_step_go_down_epsilon_02.png"  /> |
