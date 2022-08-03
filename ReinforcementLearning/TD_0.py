@@ -60,7 +60,7 @@ for s in range(env.observation_space.n):
     # num episodes, timesteps
 gamma = 0.90  # discount factor    
 alpha = 0.85  # learning rate
-num_episodes = 10000
+num_episodes = 100000
 num_timesteps = 1000
 
     # for each episode
@@ -80,14 +80,12 @@ plt.show()
     
 ############### policy #########################
 
-epsilon = 0.9
 
-Q = np.zeros((env.observation_space.n, env.action_space.n)) # Q matrix
 
 #Function to choose the next action
 def choose_action(state):
     action=0
-    if np.random.uniform(0, 1) < epsilon:
+    if np.random.uniform(0, 1) < epsilon: #with probability 1-epsilon do random move
         action = env.action_space.sample()
     else:
         action = np.argmax(Q[state, :])
@@ -96,9 +94,15 @@ def choose_action(state):
 #Function to learn the Q-value
 def update(s, s2, reward, a, a2):
     predict = Q[s, a]
+    if s==13 and a==2:
+        tmp_target = reward + gamma * Q[s2, a2]
+        #print(str( Q[s,a] ) + " "+ str( Q[s, a] + alpha * (tmp_target - predict) )+ " next state action:"+str(s2)+" "+str(a2)+ " "+str(Q[14,:]) )
     target = reward + gamma * Q[s2, a2]
     Q[s, a] = Q[s, a] + alpha * (target - predict)
 
+
+epsilon = 0.1
+Q = np.zeros((env.observation_space.n, env.action_space.n)) # Q matrix
 
 #Initializing the reward
 reward=0
@@ -106,7 +110,10 @@ reward=0
 #0: LEFT 1: DOWN 2: RIGHT 3: UP
 #def sarsa(episode, ):
 # Starting the SARSA learning
-VV = np.zeros(num_episodes)
+VV = np.zeros(num_episodes*num_timesteps)
+VV13 = np.zeros(num_episodes*num_timesteps)
+VV10 = np.zeros(num_episodes*num_timesteps)
+counter = 0
 for episode in range(num_episodes):
     t = 0
     s1 = env.reset()
@@ -131,15 +138,28 @@ for episode in range(num_episodes):
         #Updating the respective vaLues
         t += 1
         reward += 1
-         
+        
+        VV10[counter] = Q[10,1] # 10 step and step down    
+        VV13[counter] = Q[13, 2] # 13 step and step right    
+        VV[counter] = Q[14, 2] # last step and step right        
+        counter +=1
+        
         #If at the end of learning process
         if done:
             break
-            
-    VV[episode] = Q[14, 2] # last step and step right
     
-plt.plot(VV)
+print(counter)
+    
+plt.plot(VV[0:counter])
 plt.show()     
+
+plt.plot(VV13[0:counter])
+plt.show()    
+
+plt.plot(VV10[0:counter])
+plt.show()    
+
+np.set_printoptions(suppress=True)
 
 
 
