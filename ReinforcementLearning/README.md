@@ -74,3 +74,5 @@ def Q-learning(step_size_alpha in (0,1], epsilon > 0):
 
 The second last step evaluation of frozen lake 4x4 under sarsa when action is go right:
 <img src="https://github.com/emoen/miniature/blob/master/ReinforcementLearning/img/SARSA_last_step_go_right.png" />
+
+https://gsverhoeven.github.io/post/frozenlake-qlearning-convergence/
