@@ -7,6 +7,7 @@ import numpy as np
 import pandas as pd
 import plotnine as p9
 import matplotlib.pyplot as plt
+import seaborn as sns
 %matplotlib inline
 
 # RL algorithms
@@ -79,11 +80,3 @@ random_policy = np.ones([env.observation_space.n, env.action_space.n]) / env.act
 
 V = policy_evaluation(env, random_policy)
 
-plot_values(V)  
-ax = sns.heatmap(V.reshape(4,4), annot=V.reshape(4,4), linewidth=0.5)
-plt.show()
-
-check_test.run_check('policy_evaluation_check', policy_evaluation)
-
-policy_pi, V_pi = policy_iteration(env, gamma = 1, theta=1e-9, verbose = False)
-plot_values(V_pi)
