@@ -63,7 +63,7 @@ def Q-learning(step_size_alpha in (0,1], epsilon > 0):
 	    initialize S
 
 		loop for each step in episode:
-			Choose A from S using policy derived from Q (epsilon-greedy)
+		    Choose A from S using policy derived from Q (epsilon-greedy)
 		    take action A, observe R, S'
 			
 			Q(S, A) = Q(S, A) + alpha*[R + gamma*Q(S', A') - Q(S, A)]
