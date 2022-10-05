@@ -1,5 +1,14 @@
 # miniature
 
+MLDevOps -stack:
+- MLFlow tracking of artifacts
+- Docker
+- kubernets
+- pydantic
+- Uvicorn
+- Analytical ...
+- Data Build Tool (python)
+
 ML-badge:
 class predictor probability, decision tree, finding effect power, naive bayes, underfit, "semi-reinforcement learning, un, super, semi-super"
 
