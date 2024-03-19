@@ -1,0 +1,109 @@
+1. Application of Wavenet to financial times series prediction
+2. To reproduce the results from: Enhancing time series momentum strategies using deep neural networks by Lim et al 2019
+In this paper they investigate 4 methods for predicting future instruments return
+  a. Lasso regression - least absolute shrinkage and selection operator - usefull for feature selection
+     - y = β0 + β1x1 + β2x2 + ... + βnxn + ε
+	 - estimer βi, Xi er uavhengige variabler (features)
+	 - L1 = λ * (|β1| + |β2| + ... + |βn|) 
+	 - λ regularization parameter
+	 - minimize (yi_hat - yi)^2 + λ||β|| => minimize (1/2m) * ||y - Xβ||^2 + λ * ||β||
+  b. WaveNet - CNN
+  c. MLP - 4 hidden layers
+  b. LSTM - long short memory 
+  
+The work because about WaveNet as I got stuck on the implementation of this network - when applied to multivariate timeseries.
+I will come more into details about this.
+
+3. The dataset used in the paper and that I have used is pinnacles continously linked commodities contracts. This is a dataset I have bought.
+It contains date, open, closed, high, low, volumn, open interest pr day for around 100 instruments 
+which are anything from :
+currencies, soft commodities (landbruksvarer), metalls, grains, energi, og live stocks (husdyr).
+In Lim et al - around 80 instruments was selected. I have selected 43. 
+Some was discarded because:
+ - they were not traded intil the last date of 27. january 23
+ - others because of too much missing data
+
+4. Setup
+	- data driven model as opposed to a rules first model
+	- 43 models created - one for each instrument - will describe training in more details
+	- Predict: next-day percentage change in close price, R_t
+	- Model: WaveNet - a convolutional neural network - will describe in more detail
+	- The loss function is MSE
+	- model predictions is evaluated on accuracy of change in price - 50% accuracy is baseline
+	      And on edge which is mean of predicted direction times the actual movement - <50% acc can still give positive edge
+	- Time-series data is dependent so training-validation-test split needs to consider that. 
+	   Not as simple as splitting independent data.
+5. Example of train-validate-test split based on COCOA - blur is training, green validation, red test
+    - validation and test set are fixed in time for all instruments/models
+	- but the size of the training set might vary - depending on available time-series size
+6. Data needs to be preprocessed before fed to the model
+    - A univariate time series contains the timestep, and this can be trained on directly if using LSTM
+	- A multivariate time series contains (timesteps, features)
+	- To train on a CNN we need to batch it - and it becomes 3D (batch-size, timestep, features)
+	- The model trains on a batch and takes the average error and distributes it on the nodes in the back-propagation step
+7. Here is a visualization of how training multiple steps is executed - with a sliding window,
+    where each matrix is 1 input to the model, consisting of the receptive field of 256 time-steps and each feature
+	And the 5 samples consist of moving one step further in time - and all of it can make up 1 batch
+8. Wavenet: 
+  - was developed by deep mind in 2016 was first model to generate natural sounding speech. 
+    Its both speach-to-text and text-to-speach
+  - Its autoregressive - generativ model - beacuse prediction depends on the receptive field and learned weights
+  - Since it takes in speech its univariate - while my applicaion is for multivariate time-series
+  - receptive field, the blue dots at the bottom - here is 16 - in the model its 256 (1 year of trading data)
+  - arrows shows the dilated casual convolutions - the number are 2^4 = 16 when depth is 8 - 16 parameters
+    - causal means - dont look in future arrow goes to right or up as opposed to left
+	- dilated means we skip some of the data-points - allowing for growing receptive field eponentially 
+	   and parameters grow only linearly
+	- bottom right node is x_t and r_t = and the model predicts y_t+1
+9. Each hidden layer consists of 3 convolutions, a residual connection and 2 activation functions.
+   - In tensorflow - dilated, causal convolutions combined into 1
+   - Then a sigma * tanh()
+   - then 1x1 convolution - same padding: 
+     - keep feature-map constant: feature maps often increases with the depth of the network
+	 - in wavenet input is 1 time series -> output/input to first layer is number of filters - eg. 32. I use 256
+	 
+	 z=tanh(W_f * x) . sigma(W_g * x) - convolution of a layer - say the k'th
+	   - * convolution operator
+	   - . element wise multiplicatoin
+	   - W_f - matrix of weights for filter f
+	   - W_g - matrix of weights for filter g
+	   - W learnable convolutional filter (output from causal- dilated convolution)
+	 Including 1x1 convolution and res connection
+	z=(tanh(W_f * x) . sigma(W_g * x) * V) + x
+	   - V is 1x1 convolution
+	   - x is the input - representing the residual connection
+10. Main challange - Univariate vs multivariate time 
+	- In layer/convolution - the univariate ts is broadcast from 1-feature to FilterSize-number-of-features
+	- In multivariate case - one cannot broadcast
+	- Solution - is to remove residual connection on first convolution.
+11. The final implementation adds a 3 layer Multilayer perceptrion at the end of WaveNet.
+    Which has 256, 32 and 1 neuron. This can be seen as an encoder. 
+	At the end of Wavenet there are thousands of parameters. 
+	So instead of predicting a value based on many parameters, 
+	the information in those parameters are compressed into 256 and 32 parameters before a prediction
+12. The features (uavhengige variablene) was taken from a github project which implemented the Lim et al of 2019 paper.
+   It didnt implement WaveNet
+   - it contains only techincal features like 
+   - exponential moving average and 
+   - moving average convergence/divergence
+   - and feds interest rate was included
+13. Here is an example of 
+   - daily return for Sugar in blue - som er den avhengige variabelen
+   - and Volatility or sigma which is one of the features (utledet/uavhengig variabel/ubetinget variable)
+   - Her ser vi at den avhengige variabelen er ikke stasjonær - uten trend, og konstant varianse
+14. Here are prediction on the first 100 days of 4 commodities 
+    - australian dollars - 53% AN
+	- Heating oil - fyrings olje - 53% ZH
+	- nikkei index - 52 % - NK
+	- 5 year american bonds -  52%
+15. Only 22 of the 43 models had accuracy of more then 50% - so the results are not statistically significant.
+   - in the figure the accuracy is plotted together with the standard deviation of all models
+   - the models are sorted by edge (should I show something about edge?) 
+16. Here is edge x accuracy plotted. Most models are in the middle with an edge of around 0 and accuracy alitte below 50%
+    - sum of edge is 0.17 > 0 
+17. - More data could be generated using CorrelationGan published in 2020 - 
+       instead of learning for the other instruments ts
+	- Getting the correlations between instruments could be added by adding the other instruments as features
+19. - 
+   
+  
