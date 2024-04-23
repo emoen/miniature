@@ -69,7 +69,8 @@ https://www.linkedin.com/posts/katharina-koerner-7311b2105_syntheticdata-activit
 ### Reinforcement Learning
 - https://www.rebellionresearch.com/how-quantitative-finance-can-benefit-from-insights-from-reinforcement-learning-and-quantum-physics
 
-23.04.2024 update:
+### 23.04.2024 update:
+
 GitHub:
 -ML_Finance_Codes
 https://github.com/mfrdixon/ML_Finance_Codes
