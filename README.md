@@ -68,3 +68,64 @@ https://www.linkedin.com/posts/katharina-koerner-7311b2105_syntheticdata-activit
 
 ### Reinforcement Learning
 - https://www.rebellionresearch.com/how-quantitative-finance-can-benefit-from-insights-from-reinforcement-learning-and-quantum-physics
+
+23.04.2024 update:
+GitHub:
+-ML_Finance_Codes
+https://github.com/mfrdixon/ML_Finance_Codes
+
+-Category_Theory_Machine_Learning
+https://github.com/bgavran/Category_Theory_Machine_Learning
+
+-pmdarima
+https://github.com/alkaline-ml/pmdarima
+
+-crewAI
+https://github.com/joaomdmoura/crewAI
+
+-awesome-time-series
+https://github.com/cuge1995/awesome-time-series
+
+-coreforecast
+https://github.com/Nixtla/coreforecast/tree/main
+
+-machine-learning-systems-design
+https://github.com/chiphuyen/machine-learning-systems-design
+
+-A Comparison of Basis Expansions in Regression
+https://github.com/madrury/basis-expansions/blob/master/examples/comparison-of-smoothing-methods.ipynb
+
+-tsmoothie
+https://github.com/cerlymarco/tsmoothie
+
+Twitter:
+https://twitter.com/sereliezer/status/1765963042792087700/photo/2
+
+PAPER:
+-Big Bird: Transformers for Longer Sequences
+https://proceedings.neurips.cc/paper/2020/file/c8512d142a2d849725f31a9a7a361ab9-Paper.pdf
+
+-Deep Sets
+https://arxiv.org/pdf/1703.06114.pdf
+
+Div:
+-Ergodicity Economics
+https://ergodicityeconomics.com/2017/08/14/wealth-redistribution-and-interest-rates/
+
+-Methodology: Combination of Forecast Methods by Feature-based Learning
+https://htmlpreview.github.io/?https://github.com/robjhyndman/M4metalearning/blob/master/docs/M4_methodology.html#features
+
+-Sophomores dream
+https://en.wikipedia.org/wiki/Sophomore%27s_dream
+
+-Visual map of ML
+https://lmcinnes.github.io/datamapplot_examples/ArXiv_data_map_example.html
+
+-Unmodifiable lists, sets etc
+https://docs.oracle.com/en/java/javase/11/core/creating-immutable-lists-sets-and-maps.html#GUID-DD066F67-9C9B-444E-A3CB-820503735951
+
+-The Random Transformer
+https://osanseviero.github.io/hackerllama/blog/posts/random_transformer/
+
+-The Illustrated Transformer
+https://jalammar.github.io/illustrated-transformer/
