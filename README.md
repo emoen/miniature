@@ -125,6 +125,11 @@ https://lmcinnes.github.io/datamapplot_examples/ArXiv_data_map_example.html
 -Unmodifiable lists, sets etc
 https://docs.oracle.com/en/java/javase/11/core/creating-immutable-lists-sets-and-maps.html#GUID-DD066F67-9C9B-444E-A3CB-820503735951
 
+
+- Emergence in non-neural models:
+grokking modular arithmetic via average gradient outer product
+https://arxiv.org/pdf/2407.20199
+
 -The Random Transformer
 https://osanseviero.github.io/hackerllama/blog/posts/random_transformer/
 
